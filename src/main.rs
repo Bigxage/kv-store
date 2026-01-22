@@ -18,21 +18,20 @@ impl Database {
 
     //insert a value
     fn insert(&mut self, key: String, value: String) {
-        //todo: use the .insert() method on your hashmap
-        //print "inserted: [key] => [value]"
+        println!("inserted: {} => {}", key, value);
+        self.map.insert(key, value);
     }
 
     //get a value (returns an option because the key might not exist)
     fn get(&self, key: &String) -> Option<&String> {
-        //todo: use the .get() method on your hashmap
         //note: this returns option<&String> automatically
         self.map.get(key)
     }
 
     //delete a value
     fn delete(&mut self, key: &String) {
-        //todo: use the .remove() method
-        //print "deleted: [key]"
+        self.map.remove(key);
+        println!("deleted: {}", key);
     }
 }
 
@@ -44,11 +43,51 @@ fn main() {
 
         //todo:
         //1. create a string buffer for input
+        let mut input = String::new();
+
         //2. read user input (stdin)
+        io::stdin().read_line(&mut input).expect("failed to read line");
+        let choice = input.trim();
+
         //3. match on the input:
-        //    -if "1": ask for key, ask for value, call db.insert()
-        //    -if "2": ask for key, call db.get(). match on the result (some or none)
-        //    -if "3": ask for key, call db.delete()
-        //    -if "4": break loop
+        match choice {
+            "1" => {
+                println!("enter key:");
+                let mut k = String::new();
+                io::stdin().read_line(&mut k).expect("failed to read");
+
+                println!("enter value:");
+                let mut v = String::new();
+                io::stdin().read_line(&mut v).expect("failed to read");
+
+                //we use .trim().to_string() to remove the "enter" key newline
+                db.insert(k.trim().to_string(), v.trim().to_string());
+            }
+            "2" => {
+                println!("enter key to get:");
+                let mut k = String::new();
+                io::stdin().read_line(&mut k).expect("failed to read");
+                let key_trimmed = k.trim().to_string();
+
+                match db.get(&key_trimmed) {
+                    Some(value) => println!("value is: {}", value),
+                    None => println!("key not found!"),
+                }
+            }
+            "3" => {
+                println!("enter key to delete:");
+                let mut k = String::new();
+                io::stdin().read_line(&mut k).expect("failed to read");
+                let key_trimmed = k.trim().to_string();
+
+                db.delete(&key_trimmed);
+            }
+            "4" => {
+                println!("goodbye!");
+                break;
+            }
+            
+            _ => println!("invalid choice, please try again."),
+        }
     }
 }
